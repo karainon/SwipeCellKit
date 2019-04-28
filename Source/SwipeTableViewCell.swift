@@ -224,4 +224,9 @@ extension SwipeTableViewCell: SwipeControllerDelegate {
     func swipeController(_ controller: SwipeController, didDeleteSwipeableAt indexPath: IndexPath) {
         tableView?.deleteRows(at: [indexPath], with: .none)
     }
+    
+    func swipeController(_ controller: SwipeController, shouldBegin: UIPanGestureRecognizer) -> Bool {
+        guard let delegate = self.delegate, let tableView = tableView else { return true }
+        return delegate.tableView(tableView, shouldBeginSwipe: shouldBegin)
+    }
 }

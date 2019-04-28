@@ -193,6 +193,11 @@ open class SwipeCollectionViewCell: UICollectionViewCell {
 }
 
 extension SwipeCollectionViewCell: SwipeControllerDelegate {
+    
+    func swipeController(_ controller: SwipeController, shouldBegin: UIPanGestureRecognizer) -> Bool {
+        return true
+    }
+    
     func swipeController(_ controller: SwipeController, canBeginEditingSwipeableFor orientation: SwipeActionsOrientation) -> Bool {
         return true
     }

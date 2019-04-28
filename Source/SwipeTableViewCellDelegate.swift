@@ -72,6 +72,8 @@ public protocol SwipeTableViewCellDelegate: class {
      - note: The returned rectange should be in the table view's own coordinate system. Returning `nil` will result in no vertical offset to be be calculated.
      */
     func visibleRect(for tableView: UITableView) -> CGRect?
+    
+    func tableView(_ tableView: UITableView, shouldBeginSwipe: UIPanGestureRecognizer) -> Bool
 }
 
 /**
@@ -88,5 +90,9 @@ public extension SwipeTableViewCellDelegate {
     
     func visibleRect(for tableView: UITableView) -> CGRect? {
         return nil
+    }
+    
+    func tableView(_ tableView: UITableView, shouldBeginSwipe: UIPanGestureRecognizer) -> Bool {
+        return true
     }
 }

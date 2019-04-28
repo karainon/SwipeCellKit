@@ -24,6 +24,7 @@ protocol SwipeControllerDelegate: class {
     
     func swipeController(_ controller: SwipeController, visibleRectFor scrollView: UIScrollView) -> CGRect?
     
+    func swipeController(_ controller: SwipeController, shouldBegin : UIPanGestureRecognizer) -> Bool
 }
 
 class SwipeController: NSObject {
@@ -362,7 +363,7 @@ extension SwipeController: UIGestureRecognizerDelegate {
             let view = gestureRecognizer.view,
             let gestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = gestureRecognizer.translation(in: view)
-            return abs(translation.y) <= abs(translation.x)
+            return abs(translation.y) <= abs(translation.x) && (delegate?.swipeController(self, shouldBegin: panGestureRecognizer) ?? true)
         }
         
         return true
