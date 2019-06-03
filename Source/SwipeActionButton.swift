@@ -15,7 +15,6 @@ class SwipeActionButton: UIButton {
     var maximumImageHeight: CGFloat = 0
     var verticalAlignment: SwipeVerticalAlignment = .centerFirstBaseline
     
-    
     var currentSpacing: CGFloat {
         return (currentTitle?.isEmpty == false && imageHeight > 0) ? spacing : 0
     }
@@ -30,13 +29,17 @@ class SwipeActionButton: UIButton {
     
     private var imageHeight: CGFloat {
         get {
-            return currentImage == nil ? 0 : maximumImageHeight
+            return imageViewSize == .zero ? 0 : maximumImageHeight
         }
     }
     
     override var intrinsicContentSize: CGSize {
         return CGSize(width: UIView.noIntrinsicMetric, height: contentEdgeInsets.top + alignmentRect.height + contentEdgeInsets.bottom)
     }
+    
+    var imageViewRadius: SwipeAction.ImageViewRadius = .none
+    
+    var imageViewSize: CGSize = .zero
     
     convenience init(action: SwipeAction) {
         self.init(frame: .zero)
@@ -59,6 +62,12 @@ class SwipeActionButton: UIButton {
         setTitleColor(highlightedTextColor, for: .highlighted)
         setImage(action.image, for: .normal)
         setImage(action.highlightedImage ?? action.image, for: .highlighted)
+        
+        imageViewRadius = action.imageViewRadius
+        imageViewSize = action.imageViewSize
+        imageView?.backgroundColor = action.imageViewBackgroundColor
+        imageView?.tintColor = action.imageViewTintColor
+        imageView?.contentMode = .center
     }
     
     override var isHighlighted: Bool {
@@ -72,7 +81,7 @@ class SwipeActionButton: UIButton {
     func preferredWidth(maximum: CGFloat) -> CGFloat {
         let width = maximum > 0 ? maximum : CGFloat.greatestFiniteMagnitude
         let textWidth = titleBoundingRect(with: CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)).width
-        let imageWidth = currentImage?.size.width ?? 0
+        let imageWidth = imageViewSize.width
         
         return min(width, max(textWidth, imageWidth) + contentEdgeInsets.left + contentEdgeInsets.right)
     }
@@ -93,9 +102,25 @@ class SwipeActionButton: UIButton {
     }
     
     override func imageRect(forContentRect contentRect: CGRect) -> CGRect {
-        var rect = contentRect.center(size: currentImage?.size ?? .zero)
+        var rect = contentRect.center(size: imageViewSize)
         rect.origin.y = alignmentRect.minY + (imageHeight - rect.height) / 2
         return rect
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if let imageView = self.imageView {
+            
+            if imageViewSize != .zero {
+                imageView.frame.size = imageViewSize
+            }
+            
+            switch self.imageViewRadius {
+            case .circle: imageView.cornerRadius = imageView.frame.width / 2
+            case .radius(let radius): imageView.cornerRadius = radius
+            default: break
+            }
+        }
     }
 }
 
@@ -106,3 +131,18 @@ extension CGRect {
         return CGRect(x: origin.x + dx * 0.5, y: origin.y + dy * 0.5, width: size.width, height: size.height)
     }
 }
+
+fileprivate extension UIView {
+    
+    var cornerRadius: CGFloat {
+        get {
+            return layer.cornerRadius
+        }
+        set {
+            layer.masksToBounds = true
+            layer.cornerRadius = abs(CGFloat(Int(newValue * 100)) / 100)
+        }
+    }
+    
+}
+

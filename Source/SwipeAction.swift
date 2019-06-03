@@ -61,6 +61,18 @@ public class SwipeAction: NSObject {
     /// - note: If you do not specify a highlight image, the default `image` is used for the highlighted state.
     public var highlightedImage: UIImage?
     
+    public var imageViewBackgroundColor: UIColor?
+    
+    public var imageViewTintColor: UIColor?
+    
+    public var imageViewRadius: ImageViewRadius = .none
+    
+    public var imageViewSize: CGSize = .zero
+    
+    public enum ImageViewRadius {
+        case none, circle, radius(CGFloat)
+    }
+    
     /// The closure to execute when the user taps the button associated with this action.
     public var handler: ((SwipeAction, IndexPath) -> Void)?
     

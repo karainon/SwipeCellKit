@@ -272,7 +272,7 @@ class SwipeController: NSObject {
         })
         
         if let completion = completion {
-            animator.addCompletion(completion: completion)
+            animator.addCompletionInSwipeCellKit(completion: completion)
         }
         
         self.animator = animator
